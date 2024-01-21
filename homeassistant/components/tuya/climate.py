@@ -16,6 +16,7 @@ from homeassistant.components.climate import (
     ClimateEntityDescription,
     ClimateEntityFeature,
     HVACMode,
+    HVACAction,
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import UnitOfTemperature
@@ -452,6 +453,14 @@ class TuyaClimateEntity(TuyaEntity, ClimateEntity):
     def fan_mode(self) -> str | None:
         """Return fan mode."""
         return self.device.status.get(DPCode.FAN_SPEED_ENUM)
+
+    @property
+    def hvac_action(self) -> HVACAction:
+        """Return current HVAC action."""
+        if self.device.status.get("valve_state") == "open":
+            return HVACAction.HEATING
+
+        return HVACAction.IDLE
 
     @property
     def swing_mode(self) -> str:
